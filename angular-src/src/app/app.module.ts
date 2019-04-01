@@ -44,7 +44,7 @@ const appRoutes: Routes = [
   { path: 'chals/add', component: AddChalComponent, canActivate: [AuthGuard, AdminAuthGuard] },
   { path: 'ques/add', component: AddQueComponent, canActivate: [AuthGuard, AdminAuthGuard] },
   { path: 'flaws/add', component: AddFlawComponent, canActivate: [AuthGuard, AdminAuthGuard] },
-  { path: 'editor/:qCode', component: EditorComponent, canActivate: [AuthGuard, AdminAuthGuard] }
+  { path: 'editor/:qCode', component: EditorComponent, canActivate: [AuthGuard] }
   //{ path: '', component: AppComponent }
 ];
 

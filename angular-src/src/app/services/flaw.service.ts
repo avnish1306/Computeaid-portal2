@@ -52,11 +52,11 @@ export class FlawService {
       return this.http.delete(environment.apiUrl+'flaws/'+id, {headers: headers}).map(res => res.json());
   }
 
-  execute(id){
+  execute(data){
     const headers = new Headers({
         'Authorization': 'Bearer ' + localStorage.getItem('token')
     });
-    return this.http.post(environment.apiUrl+'flaws/execute', {headers: headers}).map(res => res.json());
+    return this.http.post(environment.apiUrl+'flaws/execute', data, {headers: headers}).map(res => res.json());
   }
 
 }

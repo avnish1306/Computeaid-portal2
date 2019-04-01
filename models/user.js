@@ -106,7 +106,7 @@ const userSchema = mongoose.Schema({
     }],
     flawSubmission:[{
         qCode: {
-            type: mongoose.Schema.Types.ObjectId,
+            type:String,
             ref: 'Flaw'
         },
         code:[{
@@ -118,6 +118,9 @@ const userSchema = mongoose.Schema({
         status:{
             type:String,
             default:""
+        },
+        submissionTime:{
+            type:Date
         }
     }]
 });

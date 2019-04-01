@@ -8,6 +8,7 @@ const Sub = require('../models/sub');
 const Auth = require('../middlewares/auth');
 const User=require('../models/user');
 const { c,cpp,node,python,java} = require('compile-run');
+const fs=require('fs');
 
 const negScore=0;
 //Auth.authenticateAll, 
@@ -76,85 +77,147 @@ router.post('/add',Auth.authenticateAll,  (req, res, next) => {
     }
 });
 
-router.post('/execute', function(req, res) {
-    fs.writeFile("C:\\Users\\user\\Desktop\\submitfile."+req.body.l,req.body.c, function(err) {
-        if(err) {
-            return console.log(err);
-        }
-    }); 
-    // fs.readFile("C:\\Users\\user\\Desktop\\input.txt",'utf8',function(err, contents) {
-    //     input = contents;
-    //     console.log(input);
-    // });
-    var input = fs.readFileSync("C:\\Users\\user\\Desktop\\input.txt",'utf8').toString();
-    var output = fs.readFileSync("C:\\Users\\user\\Desktop\\output.txt",'utf8').toString();
-    let resultPromise;
-    if(req.body.l == 'c')
-        resultPromise = c.runFile('C:\\Users\\user\\Desktop\\submitfile.c', { stdin: input, timeout: 1000});
-    if(req.body.l == 'cpp')
-        resultPromise = cpp.runFile('C:\\Users\\user\\Desktop\\submitfile.cpp', { stdin: input, timeout: 1000});
-    if(req.body.l == 'java')
-        resultPromise = java.runFile('C:\\Users\\user\\Desktop\\submitfile.java', { stdin: input, timeout: 1000});
-    if(req.body.l == 'py')
-        resultPromise = python.runFile('C:\\Users\\user\\Desktop\\submitfile.py', { stdin: input, timeout: 1000});
-    resultPromise
-        .then(result => {
-            if(result.errorType == "run-time") {
-                if(result.exitCode == null)
-                  res.status(200).send({res: result, code: 4});
-                if(result.exitCode > 0)
-                  res.status(200).send({res: result, code: 3});
-            }
-            else
-            if(result.errorType == "compile-time") {
-                res.status(200).send({res: result, code: 2});
-            }
-            else
-            if(output == result.stdout)
-              res.status(200).send({res: result, code: 1});
-            else
-              res.status(200).send({res: result, code: 0});
-        })
-        .catch(err => {
-            res.status(200).send(err);
-        });
-});
-
-router.post('/saveAns',Auth.authenticateAll,(req,res,next)=>{
-    User.findOne({'name':req.user.name},(err,user)=>{
+router.get('/ranklist',Auth.authenticateAll,(req,res,next)=>{
+    User.find({},(err,users)=>{
         if(err){
             res.status(500).json({
-                status: 0,
-                saved:0,
-                msg:"Fail to Save",
-                error: "Internal server error"
-            });
+                status:0,
+                msg:"Error in fetching users",
+                error:err
+            })
         }
-        console.log(user);
-        var newSubmission= user.submission.filter(sub=>{
-            return sub.queId!=req.body.queId;
-        })
-        newSubmission.push(req.body);
-        user.submission=newSubmission;
-        user.save().then(newUser=>{
-            res.status(201).json({
-                status: 1,
-                saved:1,
-                msg:"Saved",
-                error: "Internal server error"
-            });
-        }).catch(err=>{
-            res.status(500).json({
-                status: 0,
-                saved:0,
-                msg:"Fail to Save",
-                error: "Internal server error"
-            });
-        })
-        
+        var queSub={
+            'qCode':"",
+            'result':"",
+            'submissionTime':new Date()
 
+        }
+        var userObj={
+            'name':"",
+            'score':0,
+            'submissionsAC':[],
+            'submissionsWA':[],
+            'submissionsTLE':[],
+            'submissionsCE':[]
+
+        }
+        var usersArray=[];
+        for(var i=0;i<users.length;i++){
+            userObj.name=users[i].name;
+            userObj.score=users[i].contests.flawless.score;
+            var newSubmissionAC= users[i].flawSubmission.filter(sub=>{
+                return sub.result=="AC";
+            })
+            var newSubmissionTLE= users[i].flawSubmission.filter(sub=>{
+                return sub.result=="TLE";
+            })
+            var newSubmissionWA= users[i].flawSubmission.filter(sub=>{
+                return sub.result=="WA";
+            })
+            var newSubmissionCE= users[i].flawSubmission.filter(sub=>{
+                return sub.result!="AC"&&sub.result!="TLE"&&sub.result!="WA";
+            })
+            for(var j=0;j< newSubmissionAC.length;j++){
+               delete newSubmissionAC[j].code;
+            }
+            for(var j=0;j< newSubmissionTLE.length;j++){
+                delete newSubmissionTLE[j].code;
+             }
+             for(var j=0;j< newSubmissionWA.length;j++){
+                delete newSubmissionWA[j].code;
+             }
+             for(var j=0;j< newSubmissionCE.length;j++){
+                delete newSubmissionCE[j].code;
+             }
+             userObj.submissionsAC=newSubmissionAC;
+             userObj.submissionsTLE=newSubmissionTLE;
+             userObj.submissionsWA=newSubmissionWA;
+             userObj.submissionsCE=newSubmissionCE;
+             usersArray.push(userObj);
+        }
+        res.status(200).json({
+            status:1,
+            msg:"Ranklist Updated",
+            users:usersArray
+        })
     })
 })
+
+router.post('/edit',Auth.authenticateAll,  (req, res, next) => {
+    req.checkBody('qCode', 'Question Code is required').notEmpty();
+    req.checkBody('desc', 'Description is required').notEmpty();
+    req.checkBody('author', 'Author is required').notEmpty();
+    req.checkBody('points', 'Points is required').notEmpty();
+    req.checkBody('qName', 'Question Name is required').notEmpty();
+    req.checkBody('ipFormat', 'Input format is required').notEmpty();
+    req.checkBody('opFormat','Output Format is required').notEmpty();
+    req.checkBody('ipFile','Input File is required').notEmpty();
+    req.checkBody('opFile','Output File is required').notEmpty();
+    req.checkBody('constraint','Constraint is required').notEmpty();
+    req.checkBody('testcase','TestCase is required').notEmpty();
+    req.checkBody('explain','Explain is required').notEmpty();
+    req.checkBody('timeLimit','Time Limit is required').notEmpty();
+    req.checkBody('sourceLimit','Source Limit is required').notEmpty();
+
+    const errors = req.validationErrors();
+
+    if(!errors){
+        /*let buff=new Buffer(req.body.ipFile.value,'base64');
+        let ipFile=buff.toString('ascii');
+        let buff2=new Buffer(req.body.opFile.value);
+        let opFile=buff2.toString('ascii');*/
+        Flaw.findOne({'qCode':req.body.qCode},(err,flaw1)=>{
+            if(err){
+                res.status(500).json({
+                    status:0,
+                    error:err
+                })
+            }
+        })
+        const flaw = new Flaw({
+            qCode: req.body.qCode,
+            desc: req.body.desc,
+            author : req.body.author,
+            points: req.body.points,
+            qName: req.body.qName,
+            ipFormat: req.body.ipFormat,
+            opFormat: req.body.opFormat,
+            ipFile: req.body.ipFile,
+            opFile: req.body.opFile,
+            constraint: req.body.constraint,
+            testcase: req.body.testcase,
+            explain: req.body.explain,
+            timeLimit: req.body.timeLimit,
+            sourceLimit : req.body.sourceLimit
+        });
+        
+        
+        flaw.save()
+        .then(result => {
+            res.status(201).json({
+                status: 1,
+                msg: "Question Edited successfully"
+            });
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({
+                status: 0,
+                error: "Internal Server Error"
+            });
+        });
+    }
+    else{
+        console.log(errors);
+        res.status(500).json({
+            status: 0,
+            error: "All fields are required"
+        });
+    }
+});
+
+
+
 //Auth.authenticateAll,
 router.get('/', Auth.authenticateAll,  (req, res, next) => {
     Flaw.find({}).then(flaws => {
@@ -174,7 +237,8 @@ router.get('/', Auth.authenticateAll,  (req, res, next) => {
 });
 
 router.post('/execute',Auth.authenticateAll, function(req, res,next) {
-    /*fs.writeFile("C:\\Users\\user\\Desktop\\submitfile."+req.body.lang,req.body.c, function(err) {
+    //console.log(" 1 ",req.body);
+    /*fs.writeFile(__dirname+"/submitfile."+req.body.lang,req.body.code, function(err) {
         if(err) {
             return console.log(err);
         }
@@ -192,23 +256,24 @@ router.post('/execute',Auth.authenticateAll, function(req, res,next) {
                 ms:"Question Not Found"
             });
         }
+        //console.log(" 2 ",req.body);
         let ibuff=new Buffer(flaw.ipFile.value,'base64');
         var input=ibuff.toString('ascii');
 
         let obuff=new Buffer(flaw.opFile.value,'base64');
         var output=obuff.toString('ascii');
-
+        //console.log(" 3 ",req.body.code,"   ",input);
         let resultPromise;
         if(req.body.lang == 'c')
             resultPromise = c.runSource(req.body.code, { stdin: input, timeout: flaw.timeLimit});
         if(req.body.lang == 'cpp')
             resultPromise = cpp.runSource(req.body.code, { stdin: input, timeout: flaw.timeLimit});
         if(req.body.lang == 'java')
-            resultPromise = java.runSource(req.body.code, { stdin: input, timeout: flaw.timeLimit});
+            resultPromise = java.runSource(req.body.code, { stdin: input, timeout: flaw.timeLimit*2});
         if(req.body.lang == 'py')
-            resultPromise = python.runSource(req.body.code, { stdin: input, timeout: flaw.timeLimit});
-        resultPromise
-            .then(result => {
+            resultPromise = python.runSource(req.body.code, { stdin: input, timeout: flaw.timeLimit*5});
+        resultPromise.then(result => {
+                console.log(output,"  ",result.stdout,"   ",input);
                 if(result.errorType == "run-time") {
                     if(result.exitCode == null)
                         saveSubmission(req,res,result,4,"TLE",negScore,"JUDGED")
@@ -238,6 +303,7 @@ router.post('/execute',Auth.authenticateAll, function(req, res,next) {
 });
 
 function saveSubmission(req,res,result,eCode,eType,score,status){
+    console.log(" 5 ",req.body);
     var d=new Date();
     const sub=new Sub({
         qCode:req.body.qCode,
@@ -251,6 +317,7 @@ function saveSubmission(req,res,result,eCode,eType,score,status){
         desc: result.stderr
 
     });
+    console.log(sub);
     sub.save().then(newSub=>{
         User.findOne({'name':req.user.name},(err,user)=>{
             if(err){
@@ -264,11 +331,32 @@ function saveSubmission(req,res,result,eCode,eType,score,status){
             var newFlawSubmission= user.flawSubmission.filter(sub=>{
                 return sub.qCode!=req.body.qCode;
             })
-            var newSub={
-                'qCode':req.body.qCode,
-                'code':req.body.code,
-                'result':eType,
-                'status':status
+            var oldFlawSubmission=user.flawSubmission.filter(sub=>{
+                return sub.qCode==req.body.qCode;
+            })
+            //console.log(oldFlawSubmission);
+            var d=new Data();
+            var newSub;
+            if(oldFlawSubmission.length==0){
+                newSub={
+                    'qCode':req.body.qCode,
+                    'code':req.body.code,
+                    'result':eType,
+                    'status':status,
+                    'submissionTime':d
+                }
+            }else{
+                if(oldFlawSubmission[0].result!="AC"){
+                    newSub={
+                        'qCode':req.body.qCode,
+                        'code':req.body.code,
+                        'result':eType,
+                        'status':status,
+                        'submissionTime':d
+                    }
+                }else{
+                    newSub=oldFlawSubmission[0];
+                }
             }
             if(result&&eCode==1){
                 user.contests.flawless.score=user.contests.flawless.score+score;
@@ -277,6 +365,7 @@ function saveSubmission(req,res,result,eCode,eType,score,status){
             }
             newFlawSubmission.push(newSub);
             user.flawSubmission=newFlawSubmission;
+        
             user.save().then(newUser=>{
                         res.status(200).json({
                             status:1,

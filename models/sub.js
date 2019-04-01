@@ -6,10 +6,11 @@ const subSchema = mongoose.Schema({
         type: String
     },
     qCode: {
-        type: mongoose.Schema.Types.ObjectId, ref: 'Flaw' 
+        type: String, ref: 'Flaw' 
     },
     name:{
-        type: mongoose.Schema.Types.ObjectId, ref: 'User'
+        type: String,
+        default:""
     },
     submittedOn:{
         type:Date,

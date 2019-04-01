@@ -4,7 +4,7 @@
   <div class="card">
   <div class="card-header input-group">
     <div class="input-group-prepend"><span class="input-group-text" id="modeSelect">Language: </span></div>
-      <select class="form-control rounded-0" style="max-width: 100px;" placeholder="Code" formControlName="qCode" aria-describedby="modeSelect" (change)="setMode()">
+      <select class="form-control rounded-0" style="max-width: 100px;" placeholder="Code" formControlName="qLang" aria-describedby="modeSelect" (change)="setMode()">
       <option value="c" [selected]="true">C</option>
       <option value="cpp">CPP</option>
       <option value="java">JAVA</option>
@@ -22,13 +22,16 @@
     <div class="aceEditor" (input)="usedBefore=true" ace-editor [(text)]="code" [mode]="editMode" [theme]="editTheme" [options]="options" [readOnly]="false"></div>
   </div>
   <div class="card-footer">
-      <div class="alert alert-{{bootstrapclass}} alert-dismissible fade show" role="alert" style="width: 400px;">
+      <div class="alert alert-{{bootstrapclass}} alert-dismissible fade {{showit}}" role="alert" style="width: 400px;">
           <strong>{{resultMsg}}</strong>
           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-  <button type="submit" class="btn btn-success float-right">Submit</button>
+        <div class="spinner-border text-success" role="status" *ngIf="submitted">
+          <span class="sr-only">Loading...</span>
+        </div>
+  <button type="submit" class="btn btn-success float-right" [disabled]="submitted">Submit</button>
   </div>
   </div>
 </form>
