@@ -34,6 +34,10 @@ const userSchema = mongoose.Schema({
         type:String,
         default:"Z"
     },
+    temp:{
+        type:String,
+        default:"webd"
+    },
     contests:{
         cryptoquest:{
             isEligible:{
@@ -49,6 +53,10 @@ const userSchema = mongoose.Schema({
                 default:0
             },
             startTime:{
+                type:Date,
+                default:null
+            },
+            endTime:{
                 type:Date,
                 default:null
             }
@@ -69,6 +77,10 @@ const userSchema = mongoose.Schema({
             startTime:{
                 type:Date,
                 default:null
+            },
+            endTime:{
+                type:Date,
+                default:null
             }
         },
         flawless:{
@@ -87,8 +99,35 @@ const userSchema = mongoose.Schema({
             startTime:{
                 type:Date,
                 default:null
+            },
+            endTime:{
+                type:Date,
+                default:null
+            }
+        },
+        webd:{
+            isEligible:{
+                type:Boolean,
+                default:false
+            },
+            status:{
+                type:Boolean,
+                default:false
+            },
+            score:{
+                type:Number,
+                default:0
+            },
+            startTime:{
+                type:Date,
+                default:null
+            },
+            endTime:{
+                type:Date,
+                default:null
             }
         }
+        
     },
 
     submission:[{
@@ -102,6 +141,9 @@ const userSchema = mongoose.Schema({
         status:{
             type:Number,
             default:1
+        },
+        lang:{
+            type:String
         }
     }],
     flawSubmission:[{

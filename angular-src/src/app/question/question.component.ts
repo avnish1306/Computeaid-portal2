@@ -181,6 +181,27 @@ export class QuestionComponent implements OnInit {
     );
   }
 
+  clearSol(que){
+    //console.log(" saveSol   ",this.optForm.value.opt);
+    var sol=[];
+    
+    this.quesService.clearSol(this.id).subscribe(
+      data => {
+        if(data.saved){
+          this.notificationsService.success("", data.msg, {timeOut: 2000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
+          this.sol[this.index] = [];
+          this.saved[this.index]=false;
+          this.isSaved = false;
+        }
+        else
+          this.notificationsService.error("", data.msg, {timeOut: 2000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
+      },
+      error => {
+        this.notificationsService.error("Oops!!", JSON.parse(error._body).error, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
+      }
+    );
+  }
+
   addQue(){
     const que = {
       lang: this.addQueForm.value.lang,
@@ -210,7 +231,6 @@ export class QuestionComponent implements OnInit {
       }
     );
   }
-
   viewSol(){
     this.quesService.viewSol(this.id).subscribe(
       data => {

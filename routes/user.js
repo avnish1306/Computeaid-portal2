@@ -31,7 +31,8 @@ router.post('/login', (req, res, next) => {
                             id: user._id,
                             name: user.name,
                             access: user.access,
-                            lang:user.lang
+                            lang:user.lang,
+                            temp:user.temp
                         }, process.env.SECRET, {
                             expiresIn: "6h",
                         }, function(err, token){
@@ -137,7 +138,8 @@ router.post('/register', (req, res, next) => {
                                             password: hash,
                                             college: req.body.college,
                                             access: 3,
-                                            lang:req.body.lang
+                                            lang:req.body.lang,
+                                            temp:"webd"
                                         });
                                         user.save()
                                         .then(result => {
@@ -212,5 +214,60 @@ router.delete('/:id', Auth.authenticateAdmin, (req, res, next) => {
         });
     });
 });
+
+router.get('/switchContest/:key',(req,res)=>{
+    if(req.params.key!="mummy"){
+        User.find({},(err,users)=>{
+            if(err){
+                res.status(500).json({
+                    status:0,
+                    error:err
+                })
+            }
+            if(users.length>0){
+                var promises=[];
+                for(var i=0;i<num;i++){
+                    var pr=new Promise((resolve,reject)=>{
+                        User.findOne({name:users[i].name},(err,user)=>{
+                            if(err){
+                                reject(err);
+                            }
+                            var t=user.lang;
+                            user.lang=user.temp;
+                            user.temp=t;
+                            user.save().then(user=>{
+                                resolve(1);
+                            }).catch((err)=>{
+                                reject(err);
+                            })
+                        })
+                    })
+                    promises.push(pr);
+                }
+                Promise.all(promises).then((val)=>{
+                    res.status(200).json({
+                        status:1,
+                        msg:"Swaped Success"
+                    })
+                }).catch((err)=>{
+                    res.status(500).json({
+                        status:0,
+                        error:err
+                    })
+                })
+            }else{
+                res.status(200).json({
+                    status:0,
+                    msg:"No user found"
+                })
+            }
+        })
+    }else{
+        res.status(200).json({
+            status:0,
+            msg:"Opps you are not Authorize..."
+        })
+    }
+})
 
 module.exports = router;
