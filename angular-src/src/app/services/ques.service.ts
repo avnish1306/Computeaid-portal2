@@ -31,6 +31,13 @@ export class QuesService {
     return this.http.post(environment.apiUrl + 'ques/saveAns', {'queId':id,'ans':sol}, {headers: headers}).map(res => res.json());
   
   }
+  clearSol(id){
+    const headers = new Headers({
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
+    });
+    return this.http.post(environment.apiUrl + 'ques/clearAns', {'queId':id}, {headers: headers}).map(res => res.json());
+  
+  }
   addQue(que){
       const headers = new Headers({
           'Authorization': 'Bearer ' + localStorage.getItem('token')

@@ -335,7 +335,7 @@ function saveSubmission(req,res,result,eCode,eType,score,status){
                 return sub.qCode==req.body.qCode;
             })
             //console.log(oldFlawSubmission);
-            var d=new Data();
+            var d=new Date();
             var newSub;
             if(oldFlawSubmission.length==0){
                 newSub={

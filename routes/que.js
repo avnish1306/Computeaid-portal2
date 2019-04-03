@@ -166,7 +166,9 @@ router.get("/submitSol",Auth.authenticateAll,(req,res,next)=>{
                         msg:"Not Submitted"
                     })
                 }
-                const userSub=user.submission;
+                const userSub=user.submission.filter(sub=>{
+                    return sub.lang=req.user.lang;
+                });
                 var score=0;
                 //console.log(userSub,"     xxxxxxxxxxxxx   ",ques);
                 for(var i=0;i<userSub.length;i++){
@@ -196,9 +198,16 @@ router.get("/submitSol",Auth.authenticateAll,(req,res,next)=>{
                         }
                     }
                 }
-                user.contests.bughunt.score=score;
-                user.contests.bughunt.status=true;
-                user.contests.bughunt.timeLeft=null;
+                if(req.user.lang=="webd"){
+                    user.contests.wedd.score=score;
+                    user.contests.webd.status=true;
+                    user.contests.webd.endTime=new Date();
+                }else{
+                    user.contests.bughunt.score=score;
+                    user.contests.bughunt.status=true;
+                    user.contests.bughunt.endtTime=new Date();
+                }
+                
                 user.save().then(newUser=>{
                     res.status(201).json({
                         status:1,
@@ -222,6 +231,31 @@ router.get("/submitSol",Auth.authenticateAll,(req,res,next)=>{
         }
     })
 });
+router.post('/clearAns',Auth.authenticateAll,(req,res,next)=>{
+    User.findOne({name:req.user.name},(err,user)=>{
+        if(err){
+            res.status(500).json({
+                status:0,
+                error:err
+            })
+        }
+        newSubmission=user.submission.filter(sub=>{
+            return sub.queId!=req.body.queId;
+        })
+        user.submission=newSubmission;
+        user.save().then(user=>{
+            res.status(200).json({
+                status:1,
+                msg:"Cleared"
+            })
+        }).catch(err=>{
+            res.status(500).json({
+                status:0,
+                error:err
+            })
+        })
+    })
+})
 function findAns(ans,sol){
     for(var i=0;i<sol.length;i++){
         if(ans==sol[i])
