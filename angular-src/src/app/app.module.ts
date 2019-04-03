@@ -7,6 +7,7 @@ import { HttpModule } from '@angular/http';
 import { ParticlesModule } from 'angular-particle';
 import { SimpleNotificationsModule } from 'angular2-notifications/dist/';
 import { AceEditorModule } from 'ng2-ace-editor';
+import { CountdownTimerModule } from 'ngx-countdown-timer';
 
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './navbar/navbar.component';
@@ -73,6 +74,7 @@ const appRoutes: Routes = [
     ParticlesModule,
     AceEditorModule,
     SimpleNotificationsModule.forRoot(),
+    CountdownTimerModule.forRoot(),
     RouterModule.forRoot(appRoutes, {useHash: true})
   ],
   providers: [

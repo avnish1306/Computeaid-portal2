@@ -20,11 +20,18 @@ export class NavbarComponent implements OnInit {
   
   user: string;
   contest;
+  bughuntRules="Bughunt";
+  flagBughunt=false;
+  flagCrypto=false;
 
   ngOnInit() {
     this.data.currentName.subscribe(message => this.user = message);
     this.contest=this.router.url;
     console.log(this.contest);
+    
+  }
+  setFlagBughunt(){
+    this.flagBughunt=true;
   }
 
   isLoggedIn(){
@@ -33,6 +40,7 @@ export class NavbarComponent implements OnInit {
 
   logout(){
     this.authService.logout();
+    this.flagBughunt=false;
   }
 
 }

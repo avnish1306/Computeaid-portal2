@@ -7,6 +7,7 @@ import fontawesome from '@fortawesome/fontawesome';
 import { AuthService } from '../services/auth.service';
 import { QuesService } from '../services/ques.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { environment } from '../../environments/environment';
 
 fontawesome.library.add(faPlusCircle, faTrash, faPencilAlt, faEye);
 
@@ -44,12 +45,35 @@ export class QuestionComponent implements OnInit {
 
   optForm: FormGroup;
   addQueForm: FormGroup;
+  startTime;
+  currentTime;
+  duration;
+  interval;
+  timeLeft;
+  countTimer="";
+  timeFlag=false;
 
   
   ngOnInit() {
     
     this.quesService.getAllQues().subscribe(
       data => {
+        this.startTime=new Date(data.startTime);
+        this.currentTime=new Date();
+        var diff=Math.round((this.currentTime-this.startTime)/1000);
+        this.duration=environment.bughuntDuration*60;
+        this.timeLeft=this.duration-diff;
+        
+
+        //this.endTime=new Date(this.startTime.getTime() + environment.bughuntDuration*60000);
+        /*var tim=this.startTime.getTime();
+        var year=Math.round(tim/(365*24*60*60*1000));
+        //this.endTime=this.endTime+this.startTime.getYear()+"-"+this.startTime.getMonth()+"-"+this.startTime.getDate()+" "+this.startTime.getHour()+":"+this.startTime.getMinute()+":"+this.startTime.getSecond();
+        console.log(this.startTime.getTime());*/
+        //console.log(this.startTime);
+         // console.log(this.currentTime);
+        //console.log(diff);
+        this.startTimer();
         this.ques = data.ques;
         this.submission=data.submission;
         this.isEligible=data.isEligible;
@@ -100,6 +124,34 @@ export class QuestionComponent implements OnInit {
       'author': new FormControl(null, [Validators.required]),
 
     });
+  }
+  startTimer() {
+    this.interval = setInterval(() => {
+      //console.log(this.timeLeft);
+      if(this.timeLeft > 0) {
+        this.timeLeft--;
+        var hr=0;
+        if(this.timeLeft>=3600)
+          hr=Math.round(this.timeLeft/3600);
+        var min=0;
+        if((this.timeLeft-hr*60)>=60)
+          min=Math.round((this.timeLeft-hr*60)/60);
+        var scnd=Math.round((this.timeLeft-hr*3600-min*60))+30;
+        //console.log(this.timeLeft," ",hr," ",min," ",scnd);
+        this.countTimer="";
+        this.countTimer=this.countTimer+hr+":"+min+":"+scnd;
+        if(hr==0&&min<10){
+          this.timeFlag=true;
+        }
+        
+      } else {
+        clearInterval(this.interval);
+        if(!this.isAdmin)
+          this.submitSol();
+        
+        
+      }
+    },1000)
   }
   bindSol(i){
     this.selectedOpt[i]=!this.selectedOpt[i];
@@ -310,6 +362,7 @@ export class QuestionComponent implements OnInit {
   submitSol(){
     this.quesService.submitSol().subscribe(
       data => {
+        clearInterval(this.interval);
         this.notificationsService.success("Success", data.msg, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
         this.ngOnInit();
         this.router.navigate(['/']);

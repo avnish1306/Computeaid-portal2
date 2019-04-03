@@ -2,6 +2,21 @@
 <div *ngIf="!isEligible"><h2 style="color: white">You are not eligible for BugHunt.<br>Talk to Coordinators</h2></div>
 <div *ngIf="isAttempt&&isEligible"><h2 style="color: white">You have already attempetd this.<br>Talk to Coordinators</h2></div>
 <div *ngIf="!isAttempt&&isEligible">
+    <div class="row">
+        <div class="col-md-10" ></div>
+            <div class="col-md-2" *ngIf="!timeFlag" style="float: right;">
+                <div class="col-md-12" style="color: white">Time Left</div>
+                <div class="col-md-12" style="color: white">
+                    {{countTimer}}
+                </div>
+            </div>
+            <div class="col-md-2" *ngIf="timeFlag" style="float: right;">
+                    <div class="col-md-12" style="color:black;background-color: crimson">Time Left</div>
+                    <div class="col-md-12" style="color:black;background-color: crimson">
+                        {{countTimer}}
+                    </div>
+                </div>
+        </div>
 <div class="row" >
   <div class="col-md-1" >
       <ul class="list-group" style="background-color: white;padding-left: 0%;padding-right: 0;padding-top: 0%;padding-top: 0%">
