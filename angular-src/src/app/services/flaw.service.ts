@@ -18,6 +18,13 @@ export class FlawService {
       return this.http.get(environment.apiUrl + 'flaws', {headers: headers}).map(res => res.json());
   }
 
+  getRanklist(){
+      const headers = new Headers({
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
+      });
+      return this.http.get(environment.apiUrl + 'flaws/ranklist', {headers: headers}).map(res => res.json());
+  }
+
   /*submitFlag(id, flag){
       const headers = new Headers({
           'Authorization': 'Bearer ' + localStorage.getItem('token')
