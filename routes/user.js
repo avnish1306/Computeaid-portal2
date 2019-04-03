@@ -216,7 +216,8 @@ router.delete('/:id', Auth.authenticateAdmin, (req, res, next) => {
 });
 
 router.get('/switchContest/:key',(req,res)=>{
-    if(req.params.key!="mummy"){
+    console.log()
+    if(req.params.key=="mummy"){
         User.find({},(err,users)=>{
             if(err){
                 res.status(500).json({
@@ -226,7 +227,7 @@ router.get('/switchContest/:key',(req,res)=>{
             }
             if(users.length>0){
                 var promises=[];
-                for(var i=0;i<num;i++){
+                for(var i=0;i<users.length;i++){
                     var pr=new Promise((resolve,reject)=>{
                         User.findOne({name:users[i].name},(err,user)=>{
                             if(err){

@@ -1,10 +1,10 @@
 
-<div *ngIf="!isEligible"><h3>You are not eligible for BugHunt.<br>Talk to Coordinators</h3></div>
-<div *ngIf="isAttempt&&isEligible"><h3>You have already attempetd this.<br>Talk to Coordinators</h3></div>
+<div *ngIf="!isEligible"><h2 style="color: white">You are not eligible for BugHunt.<br>Talk to Coordinators</h2></div>
+<div *ngIf="isAttempt&&isEligible"><h2 style="color: white">You have already attempetd this.<br>Talk to Coordinators</h2></div>
 <div *ngIf="!isAttempt&&isEligible">
 <div class="row" >
-  <div class="col-md-1" style="background-color: white;padding-left: 0%;padding-right: 0;padding-top: 0%;padding-top: 0%">
-      <ul class="list-group">
+  <div class="col-md-1" >
+      <ul class="list-group" style="background-color: white;padding-left: 0%;padding-right: 0;padding-top: 0%;padding-top: 0%">
           <li class="list-group-item text-center rounded-0" routerLink="/ques/add" *ngIf="isAdmin()"><i class="fa fa-plus-circle"></i></li>
 
           <li class="list-group-item d-flex justify-content-between align-items-center rounded-0" *ngFor="let que of ques; let i = index" (click)="displayQue(i)" [ngClass]="{'saved':saved[i] , 'active': i==index}">
@@ -13,11 +13,13 @@
           </li>
       </ul>
   </div>
+  
   <div class="col-md-11">
       <div class="card rounded-0">
           <div class="card-header" *ngIf="selected" data-toggle="modal" data-target="#solvedModal">
               <div style="float:left" ><span [innerText]="index+1" id="id"></span> -<!--small *ngIf="isAdmin()" [innerText]="author"></small--></div>
               <div id="problem-points" style="float:right" [innerText]="points"></div>
+              
               <div style="clear:both"></div>
           </div>
           <div class="card-body">
@@ -25,7 +27,7 @@
               <!--textarea id="problem-desc" [value]="desc"></textarea-->
               <div id="problem-file"></div>
           </div>
-          <form [formGroup]="optForm" (ngSubmit)="saveSol(ques[index])">{{submitted|json}}
+          <form [formGroup]="optForm" (ngSubmit)="saveSol(ques[index])">
               <div class="card-footer form-group" id="problem-flag" *ngIf="selected ">
                 <label  class="col-sm-12" *ngFor="let optC of opt; let i=index">
                   <input *ngIf="type===1" type="radio" name="opt" value={{optC}} ng-model="opt" [checked]="submitted[i]"  (click)="bindSolR(i)" formControlName="opt"  style="margin-right: 20px">
@@ -38,13 +40,14 @@
                   </div>
               </div>
           </form>
-          <div class="card-footer" *ngIf="selected && isAdmin()">
+          <!-- <div class="card-footer" *ngIf="selected && isAdmin()">
               <code></code>
-          </div>
-          <div class="card-footer" *ngIf="selected && isAdmin()">
+          </div> -->
+          <div class="card-footer" *ngIf="selected">
               <div class="float-right">
-                  <button class="btn btn-warning"><i class="fa fa-pencil-alt"></i> Edit</button>
-                  <button class="btn btn-danger" (click)="deleteQue()"><i class="fa fa-trash"></i> Delete</button>
+                <button *ngIf="index==ques.length-1" class="btn btn-primary" (click)="submitSol()"><i class="fa fa-check"></i> Submit</button>
+                  <button *ngIf="isAdmin()" class="btn btn-warning"><i class="fa fa-pencil-alt"></i> Edit</button>
+                  <button *ngIf="isAdmin()" class="btn btn-danger" (click)="deleteQue()"><i class="fa fa-trash"></i> Delete</button>
               </div>
           </div>
       </div>
@@ -52,9 +55,7 @@
   </div>
 </div>
 <div class="row">
-    <div class="float-right">
-            <button *ngIf="index==ques.length-1" class="btn btn-primary" (click)="submitSol()"><i class="fa fa-plus-circle"></i> Submit</button>
-    </div>
+        
 </div>
 <!--div class="modal fade" id="solvedModal" tabindex="-1" role="dialog" aria-labelledby="solvedModal" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -74,3 +75,5 @@
   </div>
 </div-->
 </div>
+
+
