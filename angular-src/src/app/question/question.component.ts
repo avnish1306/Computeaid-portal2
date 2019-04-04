@@ -7,6 +7,7 @@ import fontawesome from '@fortawesome/fontawesome';
 import { AuthService } from '../services/auth.service';
 import { QuesService } from '../services/ques.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { environment } from '../../environments/environment';
 
 fontawesome.library.add(faPlusCircle, faTrash, faPencilAlt, faEye);
 
@@ -44,12 +45,35 @@ export class QuestionComponent implements OnInit {
 
   optForm: FormGroup;
   addQueForm: FormGroup;
+  startTime;
+  currentTime;
+  duration;
+  interval;
+  timeLeft;
+  countTimer="";
+  timeFlag=false;
 
   
   ngOnInit() {
     
     this.quesService.getAllQues().subscribe(
       data => {
+        this.startTime=new Date(data.startTime);
+        this.currentTime=new Date();
+        var diff=Math.round((this.currentTime-this.startTime)/1000);
+        this.duration=environment.bughuntDuration*60;
+        this.timeLeft=this.duration-diff;
+        
+
+        //this.endTime=new Date(this.startTime.getTime() + environment.bughuntDuration*60000);
+        /*var tim=this.startTime.getTime();
+        var year=Math.round(tim/(365*24*60*60*1000));
+        //this.endTime=this.endTime+this.startTime.getYear()+"-"+this.startTime.getMonth()+"-"+this.startTime.getDate()+" "+this.startTime.getHour()+":"+this.startTime.getMinute()+":"+this.startTime.getSecond();
+        console.log(this.startTime.getTime());*/
+        //console.log(this.startTime);
+         // console.log(this.currentTime);
+        //console.log(diff);
+        this.startTimer();
         this.ques = data.ques;
         this.submission=data.submission;
         this.isEligible=data.isEligible;
@@ -59,7 +83,7 @@ export class QuestionComponent implements OnInit {
         for(let i=0;i<this.ques.length;i++){
           var sol;//=this.submission.find(que=>{ console.log(que.queId,"   ",this.ques[i]._id); if(que.queId==this.ques[i]._id) return que.sol});
           for(var j=0;j<this.submission.length;j++){
-            console.log(this.submission[j].queId,"  ",this.ques[i]._id);
+            //console.log(this.submission[j].queId,"  ",this.ques[i]._id);
             if(this.submission[j].queId==this.ques[i]._id) {
                 sol=this.submission[j].ans;
                 this.saved[i]=true;
@@ -72,7 +96,7 @@ export class QuestionComponent implements OnInit {
             this.saved[i]=false;
             this.sol[i]=[];
           }
-          console.log(sol);
+         // console.log(sol);
           /*if(sol.length>0&&this.submission.length&&this.submission.length>0)
            {this.saved[i] = true
             this.sol[i] = sol
@@ -80,9 +104,10 @@ export class QuestionComponent implements OnInit {
           else{this.saved[i] = false
             this.sol[i] = []
           }*/
-              console.log(this.saved); 
+             // console.log(this.saved); 
 
         }
+        //console.log(this.submission);
       },
       error => {
         this.notificationsService.create("", JSON.parse(error._body).error, "");
@@ -99,6 +124,34 @@ export class QuestionComponent implements OnInit {
       'author': new FormControl(null, [Validators.required]),
 
     });
+  }
+  startTimer() {
+    this.interval = setInterval(() => {
+      //console.log(this.timeLeft);
+      if(this.timeLeft > 0) {
+        this.timeLeft--;
+        var hr=0;
+        if(this.timeLeft>=3600)
+          hr=Math.round(this.timeLeft/3600);
+        var min=0;
+        if((this.timeLeft-hr*60)>=60)
+          min=Math.round((this.timeLeft-hr*60)/60);
+        var scnd=Math.round((this.timeLeft-hr*3600-min*60))+30;
+        //console.log(this.timeLeft," ",hr," ",min," ",scnd);
+        this.countTimer="";
+        this.countTimer=this.countTimer+hr+":"+min+":"+scnd;
+        if(hr==0&&min<10){
+          this.timeFlag=true;
+        }
+        
+      } else {
+        clearInterval(this.interval);
+        if(!this.isAdmin)
+          this.submitSol();
+        
+        
+      }
+    },1000)
   }
   bindSol(i){
     this.selectedOpt[i]=!this.selectedOpt[i];
@@ -119,6 +172,9 @@ export class QuestionComponent implements OnInit {
     this.submitted=[false,false,false,false];
     this.index = index;
     this.selected = true;
+
+    //console.log(this.submission);
+
     this.points = this.ques[index].points;
     this.author = this.ques[index].author;
     this.desc = this.ques[index].desc;
@@ -126,23 +182,34 @@ export class QuestionComponent implements OnInit {
     this.isSaved = (this.sol[index].length>0)?true:false;
     this.type=this.ques[index].type;
     this.opt=this.ques[index].opt;
-    var sol=this.submission.find(que=>{ console.log(que.queId,"  ||  ", this.id); if(que.queId==this.id) return que;});
+    var sol=this.submission.find(que=>{ /*console.log(que.queId,"  ||  ", this.id);*/ if(que.queId==this.id) return que;});
     if(!this.isSaved){
       this.optForm.reset();
     }
     
-    console.log("  sol ",sol);
+    
    
     if(sol){
       sol=sol.ans;
-    for(var i=0;i< sol.length;i++){
+    /*for(var i=0;i< sol.length;i++){
         for(var j=0;j<4;j++){
           if(sol[i]==this.opt[j]){
             this.submitted[j]=true;
             break;
           }
         }
+    }}*/
+    //console.log("  sol ",sol);
+    for(var i=0;i<4;i++){
+      for(var j=0;j<sol.length;j++){
+        if(sol[j]==this.opt[i]){
+          this.submitted[i]=true;
+          //console.log(sol[j],"  ",i);
+          break;
+        }
+      }
     }}
+    //console.log(this.submitted);
     this.selectedOpt=this.submitted;
     
 
@@ -153,12 +220,13 @@ export class QuestionComponent implements OnInit {
   }
 
   saveSol(que){
-    console.log(" saveSol   ",this.optForm.value.opt);
+   // console.log(" saveSol   ",this.optForm.value.opt);
     var sol=[];
     if(que.type==1)
       sol.push(this.optForm.value.opt);
     else if(que.type==2){
       for(var i=0;i<4;i++){
+        var tempArray=[];
         if(this.selectedOpt[i]){
           sol.push(que.opt[i]);
         }
@@ -168,7 +236,31 @@ export class QuestionComponent implements OnInit {
       data => {
         if(data.saved){
           this.notificationsService.success("", data.msg, {timeOut: 2000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
-          this.sol[this.index] = this.optForm.value.opt;
+          if(que.type==1)
+            this.sol[this.index] = this.optForm.value.opt;
+          else{
+            this.sol[this.index]=[];
+            for(var j=0;j<sol.length;j++){
+              this.sol[this.index].push(sol[j]);
+            }
+          }
+          var s=0;
+          for(var j=0;j<this.submission.length;j++){
+            if(this.submission[j].queId==this.id){
+              this.submission[j].ans=sol;
+              s=1;
+              break;
+            }
+          }
+          if(s==0){
+            var ss={
+              'queId':this.id,
+              'ans':sol,
+              'status':1
+            }
+            this.submission.push(ss);
+          }
+         // console.log(this.submission);
           this.saved[this.index]=true;
           this.isSaved = true;
         }
@@ -187,11 +279,21 @@ export class QuestionComponent implements OnInit {
     
     this.quesService.clearSol(this.id).subscribe(
       data => {
-        if(data.saved){
+        if(data.status){
           this.notificationsService.success("", data.msg, {timeOut: 2000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
           this.sol[this.index] = [];
           this.saved[this.index]=false;
           this.isSaved = false;
+          this.submitted=[false,false,false,false];
+          this.selectedOpt=this.submitted;
+          for(var j=0;j<this.submission.length;j++){
+            if(this.submission[j].queId==this.id){
+              this.submission[j].ans=[];
+              break;
+            }
+          }
+          //console.log(this.submission[j].ans);
+
         }
         else
           this.notificationsService.error("", data.msg, {timeOut: 2000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
@@ -260,6 +362,7 @@ export class QuestionComponent implements OnInit {
   submitSol(){
     this.quesService.submitSol().subscribe(
       data => {
+        clearInterval(this.interval);
         this.notificationsService.success("Success", data.msg, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
         this.ngOnInit();
         this.router.navigate(['/']);

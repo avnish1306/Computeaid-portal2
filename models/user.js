@@ -42,7 +42,7 @@ const userSchema = mongoose.Schema({
         cryptoquest:{
             isEligible:{
                 type:Boolean,
-                default:false
+                default:true
             },
             status:{
                 type:Boolean,
@@ -64,7 +64,7 @@ const userSchema = mongoose.Schema({
         bughunt:{
             isEligible:{
                 type:Boolean,
-                default:false
+                default:true
             },
             status:{
                 type:Boolean,
@@ -86,7 +86,7 @@ const userSchema = mongoose.Schema({
         flawless:{
             isEligible:{
                 type:Boolean,
-                default:false
+                default:true
             },
             status:{
                 type:Boolean,

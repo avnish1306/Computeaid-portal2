@@ -89,31 +89,53 @@ router.post('/saveAns',Auth.authenticateAll,(req,res,next)=>{
 })
 //Auth.authenticateAll,
 router.get('/', Auth.authenticateAll,  (req, res, next) => {
-    Que.find({'lang':req.user.lang}, 'desc opt points author type').then(ques => {
-        User.findOne({'name':req.user.name},(err,user)=>{
-            if(err){
+    User.findOne({name:req.user.name},(err,user)=>{
+        if(err){
+            res.status(500).json({
+                status: 0,
+                error: "Internal server error"
+            });
+        }
+        if(user.contests.bughunt.startTime==null&&user.access!=1){
+            user.contests.bughunt.startTime=new Date();
+        }
+        user.save().then(newuser=>{
+            Que.find({'lang':req.user.lang}, 'desc opt points author type').then(ques => {
+                User.findOne({'name':req.user.name},(err,user)=>{
+                    if(err){
+                        res.status(500).json({
+                            status: 0,
+                            error: "Internal server error"
+                        });
+                    }
+                    console.log(newuser.contests.bughunt.startTime)
+                    res.status(200).json({
+                        status: 1,
+                        ques: ques,
+                        startTime:newuser.contests.bughunt.startTime,
+                        submission: user.submission,
+                        isEligible:user.contests.bughunt.isEligible,
+                        isAttempt:user.contests.bughunt.status
+                    });
+                })
+                
+            })
+            .catch(err => {
+                console.log(err);
                 res.status(500).json({
                     status: 0,
                     error: "Internal server error"
                 });
-            }
-            res.status(200).json({
-                status: 1,
-                ques: ques,
-                submission: user.submission,
-                isEligible:user.contests.bughunt.isEligible,
-                isAttempt:user.contests.bughunt.status
             });
-        })
-        
-    })
-    .catch(err => {
-        console.log(err);
-        res.status(500).json({
-            status: 0,
-            error: "Internal server error"
+        }).catch(err => {
+            console.log(err);
+            res.status(500).json({
+                status: 0,
+                error: "Internal server error"
+            });
         });
-    });
+    })
+    
 });
 
 router.delete('/:id', Auth.authenticateAdmin, (req, res, next) => {
@@ -205,7 +227,7 @@ router.get("/submitSol",Auth.authenticateAll,(req,res,next)=>{
                 }else{
                     user.contests.bughunt.score=score;
                     user.contests.bughunt.status=true;
-                    user.contests.bughunt.endtTime=new Date();
+                    user.contests.bughunt.endTime=new Date();
                 }
                 
                 user.save().then(newUser=>{
