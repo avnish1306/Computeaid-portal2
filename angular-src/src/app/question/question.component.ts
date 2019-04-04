@@ -37,6 +37,7 @@ export class QuestionComponent implements OnInit {
   index: number;
   opt;
   sol;
+  temp = [];
   isEligible=false;
   isAttempt=false;
   submission;
@@ -51,7 +52,7 @@ export class QuestionComponent implements OnInit {
   interval;
   timeLeft;
   countTimer="";
-  timeFlag=false;
+  timeFlag=0;
 
   
   ngOnInit() {
@@ -130,24 +131,39 @@ export class QuestionComponent implements OnInit {
       //console.log(this.timeLeft);
       if(this.timeLeft > 0) {
         this.timeLeft--;
-        var hr=0;
-        if(this.timeLeft>=3600)
-          hr=Math.round(this.timeLeft/3600);
-        var min=0;
-        if((this.timeLeft-hr*60)>=60)
-          min=Math.round((this.timeLeft-hr*60)/60);
-        var scnd=Math.round((this.timeLeft-hr*3600-min*60))+30;
+        var hr=0, min=0, scnd=0;
+        var tempTimeLeft=this.timeLeft;
+        if(tempTimeLeft > 3600)
+          hr = Math.floor(tempTimeLeft/3600);
+        tempTimeLeft %= 3600;
+        if(tempTimeLeft > 60)
+          min = Math.floor(tempTimeLeft/60);
+        scnd = tempTimeLeft%60;
+        
+        // if(this.timeLeft>=3600)
+        //   hr=Math.round(this.timeLeft/3600);
+        // var min=0;
+        // if((this.timeLeft-hr*60)>=60)
+        //   min=Math.round((this.timeLeft-hr*60)/60);
+        // var scnd=Math.round((this.timeLeft-hr*3600-min*60));
+        // console.log(this.timeLeft," ",scnd);
+        // if(scnd>=60){
+        //   scnd=scnd+30;
+        //   //this.timeLeft=59;
+        // }
+        
         //console.log(this.timeLeft," ",hr," ",min," ",scnd);
-        this.countTimer="";
-        this.countTimer=this.countTimer+hr+":"+min+":"+scnd;
+        this.countTimer=hr+":"+(min < 10 ? '0'+min : min)+":"+(scnd < 10 ? '0'+scnd : scnd);
         if(hr==0&&min<10){
-          this.timeFlag=true;
+          this.timeFlag=1;
+          if(hr==0&&min<5)
+          this.timeFlag=2;
         }
+        if(!this.isAdmin()&&hr==0&&min==0&&scnd==1)
+            this.submitSol();
         
       } else {
         clearInterval(this.interval);
-        if(!this.isAdmin)
-          this.submitSol();
         
         
       }
@@ -178,6 +194,8 @@ export class QuestionComponent implements OnInit {
     this.points = this.ques[index].points;
     this.author = this.ques[index].author;
     this.desc = this.ques[index].desc;
+    this.temp = this.desc.split("<embedded>");
+
     this.id = this.ques[index]._id;
     this.isSaved = (this.sol[index].length>0)?true:false;
     this.type=this.ques[index].type;
@@ -365,7 +383,7 @@ export class QuestionComponent implements OnInit {
         clearInterval(this.interval);
         this.notificationsService.success("Success", data.msg, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
         this.ngOnInit();
-        this.router.navigate(['/']);
+        this.router.navigate(['/welcome']);
       },
       error => {
         this.notificationsService.error("Oops!!", JSON.parse(error._body).error, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});

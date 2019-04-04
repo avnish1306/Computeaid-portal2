@@ -23,6 +23,7 @@ import { AddQueComponent } from './add-que/add-que.component';
 import { AddFlawComponent } from './add-flaw/add-flaw.component';
 import { FlawComponent } from './flaw/flaw.component';
 import { EditorComponent } from './editor/editor.component';
+import { WelcomepageComponent } from './welcomepage/welcomepage.component';
 
 import { AuthService } from './services/auth.service';
 import { ChalService } from './services/chal.service';
@@ -45,6 +46,7 @@ const appRoutes: Routes = [
   { path: 'chals/add', component: AddChalComponent, canActivate: [AuthGuard, AdminAuthGuard] },
   { path: 'ques/add', component: AddQueComponent, canActivate: [AuthGuard, AdminAuthGuard] },
   { path: 'flaws/add', component: AddFlawComponent, canActivate: [AuthGuard, AdminAuthGuard] },
+  { path: 'welcome', component: WelcomepageComponent, canActivate: [AuthGuard] },
   { path: 'editor/:qCode', component: EditorComponent, canActivate: [AuthGuard] }
   //{ path: '', component: AppComponent }
 ];
@@ -64,7 +66,8 @@ const appRoutes: Routes = [
     AddQueComponent,
     AddFlawComponent,
     FlawComponent,
-    EditorComponent
+    EditorComponent,
+    WelcomepageComponent
   ],
   imports: [
     BrowserModule,

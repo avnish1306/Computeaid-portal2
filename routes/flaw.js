@@ -400,6 +400,7 @@ function saveSubmission(req,res,result,eCode,eType,score,status){
 }
 
 router.delete('/:id', Auth.authenticateAdmin, (req, res, next) => {
+    console.log("ID is: "+req.params.id);
     Que.remove({_id: req.params.id}).exec()
     .then(result => {
         res.status(200).json({

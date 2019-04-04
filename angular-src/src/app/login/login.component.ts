@@ -22,7 +22,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     if(this.authService.isLoggedIn())
-      this.router.navigate(['/chals']);
+      this.router.navigate(['/welcome']);
     this.loginForm = new FormGroup({
       'name': new FormControl(null, [Validators.required, Validators.minLength(3)]),
       'password': new FormControl(null, [Validators.required, Validators.minLength(6)])
@@ -39,7 +39,7 @@ export class LoginComponent implements OnInit {
       data => {
         this.authService.storeUserData(data.token);
         this.dataService.changeName(user.name);
-        this.router.navigate(['/chals']);
+        this.router.navigate(['/welcome']);
       },
       error => {
         this.notificationsService.warn("Oops!!", JSON.parse(error._body).error, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});

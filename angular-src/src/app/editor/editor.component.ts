@@ -123,7 +123,7 @@ export class EditorComponent implements OnInit {
     }
     if(this.result.eCode == 2) {
       this.bootstrapclass = 'warning';
-      this.compileError = this.result.res.stderr.replace(/C.*:/ig,'filename.'+this.qLang);
+      this.compileError = this.result.res.stderr.replace(/C.*:/ig,'solution.'+this.qLang);
       this.resultMsg = 'Compile Time Error';
       this.showitt = 'show';
     }

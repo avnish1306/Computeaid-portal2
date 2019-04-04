@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-// import { NotificationsService } from 'angular2-notifications/dist/';
+import { NotificationsService } from 'angular2-notifications/dist/';
 import { faPlusCircle, faTrash, faPencilAlt, faEye } from '@fortawesome/fontawesome-free-solid'
 import fontawesome from '@fortawesome/fontawesome';
 
@@ -19,8 +19,8 @@ export class FlawComponent implements OnInit {
 
   constructor(private router: Router,
     private authService: AuthService,
-    private flawService: FlawService/*,
-    private notificationsService: NotificationsService*/) { }
+    private flawService: FlawService,
+    private notificationsService: NotificationsService) { }
 
     flaws;
     selected: boolean = false;
@@ -52,7 +52,7 @@ export class FlawComponent implements OnInit {
         // }
       },
       error => {
-        //this.notificationsService.create("", JSON.parse(error._body).error, "");
+        this.notificationsService.create("", JSON.parse(error._body).error, "");
       }
     );
     this.flagForm = new FormGroup({
@@ -95,16 +95,16 @@ export class FlawComponent implements OnInit {
     this.flawService.saveSol(this.id, this.flagForm.value.flag).subscribe(
       data => {
         if(data.solved){
-          // this.notificationsService.success("Yahoo!!", data.msg, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
+          this.notificationsService.success("Yahoo!!", data.msg, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
           this.solved[this.index] = true;
           this.isSolved = true;
           this.flagForm.reset();
         }
         else;
-          // this.notificationsService.error("Sigh!!", data.msg, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
+          this.notificationsService.error("Sigh!!", data.msg, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
       },
       error => {
-        // this.notificationsService.error("Oops!!", JSON.parse(error._body).error, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
+        this.notificationsService.error("Oops!!", JSON.parse(error._body).error, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
       }
     );
   }
@@ -119,30 +119,30 @@ export class FlawComponent implements OnInit {
     }
     this.flawService.addflaw(flaw).subscribe(
       data => {
-        // this.notificationsService.success("Success", data.msg, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
+        this.notificationsService.success("Success", data.msg, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
         this.addFlawForm.reset();
       },
       error => {
-        // this.notificationsService.error("Oops!!", JSON.parse(error._body).error, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
+        this.notificationsService.error("Oops!!", JSON.parse(error._body).error, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
       }
     );
   }
 
-  viewFlag(){
-    this.flawService.viewSol(this.id).subscribe(
-      data => {
-        this.flags[this.index] = data.msg;
-      },
-      error => {
-        // this.notificationsService.error("Oops!!", JSON.parse(error._body).error, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
-      }
-    );
-  }
+  // viewFlag(){
+  //   this.flawService.viewSol(this.id).subscribe(
+  //     data => {
+  //       this.flags[this.index] = data.msg;
+  //     },
+  //     error => {
+  //       this.notificationsService.error("Oops!!", JSON.parse(error._body).error, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
+  //     }
+  //   );
+  // }
 
   deleteFlaw(){
     this.flawService.deleteflaw(this.id).subscribe(
       data => {
-        // this.notificationsService.success("Success", data.msg, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
+        this.notificationsService.success("Success", data.msg, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
         this.ngOnInit();
         if(this.index===0)
           this.router.navigate(['/flaws/add']);
@@ -150,7 +150,7 @@ export class FlawComponent implements OnInit {
           this.displayFlaw(this.index-1);
       },
       error => {
-        // this.notificationsService.error("Oops!!", JSON.parse(error._body).error, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
+        this.notificationsService.error("Oops!!", JSON.parse(error._body).error, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
       }
     );
   }

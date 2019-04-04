@@ -20,7 +20,6 @@ export class NavbarComponent implements OnInit {
   
   user: string;
   contest;
-  bughuntRules="Bughunt";
   flagBughunt=false;
   flagCrypto=false;
 
