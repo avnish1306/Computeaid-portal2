@@ -22,32 +22,33 @@ export class RankingComponent implements OnInit {
   flawScores = [];
   queScores = [];
   team = JSON.parse(localStorage.getItem('user')).name;
+  dataFlaw = [["HW","HY"],[["Avnish", 200, ["AC","WA"]],["Abhishek", 100, ["CE", "TLE"]]]];
 
   ngOnInit() {
-    this.chalService.getAllChals().subscribe(
-      data =>{
-        this.chals = data.chals;
-        for(let chal of this.chals){
-          for(let user of chal.users){
-            if(this.ranking.hasOwnProperty(user))
-              this.ranking[user] = this.ranking[user]+chal.points;
-            else
-              this.ranking[user] = chal.points;
-          }
-        }
-        for(let key in this.ranking){
-          if(this.ranking.hasOwnProperty(key)){
-            this.chalScores.push({'team': key, 'score': this.ranking[key]})
-          }
-        }
-        this.chalScores.sort(function(a, b){
-          return b.score - a.score;
-        });
-      },
-      error => {
-        this.notificationsService.error("Oops!!", JSON.parse(error._body).error, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
-      }
-    );
+    // this.chalService.getAllChals().subscribe(
+    //   data =>{
+    //     this.chals = data.chals;
+    //     for(let chal of this.chals){
+    //       for(let user of chal.users){
+    //         if(this.ranking.hasOwnProperty(user))
+    //           this.ranking[user] = this.ranking[user]+chal.points;
+    //         else
+    //           this.ranking[user] = chal.points;
+    //       }
+    //     }
+    //     for(let key in this.ranking){
+    //       if(this.ranking.hasOwnProperty(key)){
+    //         this.chalScores.push({'team': key, 'score': this.ranking[key]})
+    //       }
+    //     }
+    //     this.chalScores.sort(function(a, b){
+    //       return b.score - a.score;
+    //     });
+    //   },
+    //   error => {
+    //     this.notificationsService.error("Oops!!", JSON.parse(error._body).error, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
+    //   }
+    // );
 
     
     this.flawService.getRanklist().subscribe(
@@ -60,30 +61,30 @@ export class RankingComponent implements OnInit {
     );
 
     
-    this.queService.getAllQues().subscribe(
-      data =>{
-        this.ques = data.ques;
-        for(let que of this.ques){
-          for(let user of que.users){
-            if(this.ranking.hasOwnProperty(user))
-              this.ranking[user] = this.ranking[user]+que.points;
-            else
-              this.ranking[user] = que.points;
-          }
-        }
-        for(let key in this.ranking){
-          if(this.ranking.hasOwnProperty(key)){
-            this.queScores.push({'team': key, 'score': this.ranking[key]})
-          }
-        }
-        this.queScores.sort(function(a, b){
-          return b.score - a.score;
-        });
-      },
-      error => {
-        this.notificationsService.error("Oops!!", JSON.parse(error._body).error, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
-      }
-    );
+    // this.queService.getAllQues().subscribe(
+    //   data =>{
+    //     this.ques = data.ques;
+    //     for(let que of this.ques){
+    //       for(let user of que.users){
+    //         if(this.ranking.hasOwnProperty(user))
+    //           this.ranking[user] = this.ranking[user]+que.points;
+    //         else
+    //           this.ranking[user] = que.points;
+    //       }
+    //     }
+    //     for(let key in this.ranking){
+    //       if(this.ranking.hasOwnProperty(key)){
+    //         this.queScores.push({'team': key, 'score': this.ranking[key]})
+    //       }
+    //     }
+    //     this.queScores.sort(function(a, b){
+    //       return b.score - a.score;
+    //     });
+    //   },
+    //   error => {
+    //     this.notificationsService.error("Oops!!", JSON.parse(error._body).error, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
+    //   }
+    // );
   }
 
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { FlawService } from '../services/flaw.service';
 
@@ -9,10 +9,11 @@ import { FlawService } from '../services/flaw.service';
   styleUrls: ['./editor.component.css']
 })
 export class EditorComponent implements OnInit {
-  showit: string;
+  showit: string; showitt: string;
 
-  constructor(private route: ActivatedRoute, private flawService: FlawService) { }
+  constructor(private route: ActivatedRoute, private router: Router, private flawService: FlawService) { }
   qCode; userId;
+  flaws;
   usedBefore: boolean = false;
   preCodes = ["#include <stdio.h>\r\nint main()\r\n{\r\n\tprintf(\"Hello World !!!\");\r\n\treturn 0;\r\n}",
   "#include <iostream>\r\nusing namespace std;\r\nint main()\r\n{\r\n\tcout << \"Hello World !!!\";\r\n\treturn 0;\r\n}",
@@ -21,13 +22,31 @@ export class EditorComponent implements OnInit {
   code: string;  qLang: string = 'c';  result: any; resultMsg: string;
   bootstrapclass: string = 'info';
   codeForm: FormGroup; submitted: boolean=false;
-  text="Avnish";  editTheme: string;  editMode: string;
+  text="Avnish";  editTheme: string;  editMode: string; compileError: string = '';
 
   ngOnInit() {
     this.editTheme = 'eclipse';
     this.editMode = 'c_cpp';
     this.code = this.preCodes[0];
     this.qCode = this.route.snapshot.paramMap.get('qCode');
+    this.flawService.getAllflaws().subscribe(
+      data => {
+        this.flaws = data.flaws;
+        let flag=0;
+        for(let i=0;i<Object.keys(data.flaws).length;i++)
+          if(data.flaws[i].qCode == this.qCode) {
+            flag = 1;
+            break;
+          }
+        if(flag == 0) {
+          alert('Please Navigate from a Question');
+          this.router.navigate(['flaw']);
+        }
+      },
+      error => {
+        //this.notificationsService.create("", JSON.parse(error._body).error, "");
+      }
+    );
     this.userId = JSON.parse(localStorage.getItem('user')).name;
     this.codeForm = new FormGroup({
       'qLang': new FormControl(null),
@@ -60,6 +79,10 @@ export class EditorComponent implements OnInit {
 
   setTheme() {
     this.editTheme = this.codeForm.value.theme;
+  }
+
+  dismissAlert() {
+    this.showit = '';
   }
   
   setMode() {
@@ -100,8 +123,9 @@ export class EditorComponent implements OnInit {
     }
     if(this.result.eCode == 2) {
       this.bootstrapclass = 'warning';
-      let errorString = this.result.res.stderr;
-      this.resultMsg = 'Compile Time Error:'+errorString;
+      this.compileError = this.result.res.stderr.replace(/C.*:/ig,'filename.'+this.qLang);
+      this.resultMsg = 'Compile Time Error';
+      this.showitt = 'show';
     }
     if(this.result.eCode == 3) {
       this.bootstrapclass = 'danger';

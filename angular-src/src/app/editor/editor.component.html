@@ -22,16 +22,22 @@
     <div class="aceEditor" (input)="usedBefore=true" ace-editor [(text)]="code" [mode]="editMode" [theme]="editTheme" [options]="options" [readOnly]="false"></div>
   </div>
   <div class="card-footer">
-      <div class="alert alert-{{bootstrapclass}} alert-dismissible fade {{showit}}" role="alert" style="width: 400px;">
+      <div class="alert alert-{{bootstrapclass}} alert-dismissible fade {{showit}}" role="alert" style="width: 250px;">
           <strong>{{resultMsg}}</strong>
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <button type="button" class="close" (click)="showit = false">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="spinner-border text-success" role="status" *ngIf="submitted">
           <span class="sr-only">Loading...</span>
-        </div>
-  <button type="submit" class="btn btn-success float-right" [disabled]="submitted">Submit</button>
+        </div><div *ngIf="submitted">Judging your code...</div> 
+  <button type="submit" class="btn btn-success float-right" data-toggle="alert" data-target="#exampleModalCenter2" [disabled]="submitted">Submit</button><br><Br>
+  <div *ngIf="compileError != ''" class="alert alert-dismissible fade {{showitt}}" role="alert">
+    <textarea rows="10" class="form-control rounded-0" style="background: transparent; font-family: 'Courier New', Courier, monospace">{{compileError}}</textarea>
+    <button type="button" class="close" (click)="showitt = false; compileError = ''">
+      <span aria-hidden="true">&times;</span>
+    </button>
   </div>
+</div>
   </div>
 </form>

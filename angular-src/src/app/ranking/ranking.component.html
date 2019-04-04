@@ -14,28 +14,25 @@
     </tr>
   </tbody>
 </table>
-<h6 class="text-warning">{{flawScores | json}}</h6>
 <table class="table text-center">
   <thead class="thead-dark">
     <tr>
       <th scope="col">#</th>
       <th scope="col">Team Name</th>
       <th scope="col">Score</th>
-      <th scope="col" colspan="3">Submissions</th>
+      <th scope="col" *ngFor="let sol of dataFlaw[0]">{{sol}}</th>
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let score of flawScores; let i = index" rowspan="2">
+    <tr *ngFor="let score of dataFlaw[1]; let i = index" class="text-info">
       <th style="color: yellowgreen" scope="row">{{i+1}}</th>
-      <td style="color: yellowgreen">{{score.score}}</td>
-      <td style="color: yellowgreen">{{score.result}}</td>
-      <!-- <td *ngFor=></td> -->
-      <td style="color: yellowgreen">{{score.submissionsAC[0].code}}</td>
-      <td style="color: yellowgreen">{{score.submissionsAC[0].submissionTime}}</td>
-      <td style="color: yellowgreen">{{score.submissionsAC[0].result}}</td><tr>
-      <td style="color: yellowgreen">{{score.submissionsWA[0].code}}</td>
-      <td style="color: yellowgreen">{{score.submissionsWA[0].submissionTime}}</td>
-      <td style="color: yellowgreen">{{score.submissionsWA[0].result}}</td></tr>
+      <td style="color: yellowgreen">{{score[0]}}</td>
+      <td style="color: yellowgreen">{{score[1]}}</td>
+      <td style="color: yellowgreen" *ngFor="let sol of score[2]">
+        <i *ngIf="sol=='AC'" class="fas fa-check text-success"></i>
+        <i *ngIf="sol=='TLE'" class="fas fa-clock text-warning"></i>
+        <i *ngIf="sol=='CE'" class="fas fa-exclamation-triangle text-warning"></i>
+        <i *ngIf="sol=='WA'" class="fas fa-times text-danger"></i></td>
     </tr>
   </tbody>
 </table>
