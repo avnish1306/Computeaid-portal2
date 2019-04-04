@@ -8,5 +8,5 @@ export const environment = {
   apiUrl: 'http://localhost:3000/',
   //apiUrl: 'http://192.168.43.223:3000/'
   //apiUrl: 'https://computeaid-portal.herokuapp.com/'
-  bughuntDuration:55
+  bughuntDuration:140
 };

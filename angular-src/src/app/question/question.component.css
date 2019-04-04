@@ -22,11 +22,11 @@ li.list-group-item.active{
 	background-color: rgba(0, 123, 255, 0.5);
 	border: none;
 }
-div.col-sm-3.savedd{
+div.col-sm-2.savedd{
 		background-color: rgba(40, 167, 69, 0.5);
 }
 
-div.col-sm-3.activee{
+div.col-sm-2.activee{
 	background-color: rgba(0, 123, 255, 0.5);
 }
 

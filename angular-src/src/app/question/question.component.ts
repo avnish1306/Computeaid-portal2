@@ -43,6 +43,7 @@ export class QuestionComponent implements OnInit {
   submission;
   submitted=[false,false,false,false];
   selectedOpt=[false,false,false,false];
+  marked=[];
 
   optForm: FormGroup;
   addQueForm: FormGroup;
@@ -82,6 +83,7 @@ export class QuestionComponent implements OnInit {
         this.saved = new Array(this.ques.length);
         this.sol = new Array(this.ques.length).fill([]);
         for(let i=0;i<this.ques.length;i++){
+          this.marked.push(false);
           var sol;//=this.submission.find(que=>{ console.log(que.queId,"   ",this.ques[i]._id); if(que.queId==this.ques[i]._id) return que.sol});
           for(var j=0;j<this.submission.length;j++){
             //console.log(this.submission[j].queId,"  ",this.ques[i]._id);
@@ -126,6 +128,21 @@ export class QuestionComponent implements OnInit {
 
     });
   }
+
+  markQuestion(i: number) {
+    this.marked[i] = !this.marked[i];
+  }
+
+  movePrevious(i: number) {
+    if(i > 0)
+      this.displayQue(i-1);
+  }
+
+  moveNext(i: number) {
+    if(i < this.ques.length-1)
+      this.displayQue(i+1);
+  }
+
   startTimer() {
     this.interval = setInterval(() => {
       //console.log(this.timeLeft);
@@ -194,7 +211,9 @@ export class QuestionComponent implements OnInit {
     this.points = this.ques[index].points;
     this.author = this.ques[index].author;
     this.desc = this.ques[index].desc;
-    this.temp = this.desc.split("<embedded>");
+    this.temp = this.desc.split("<codeishere>");
+    // if(this.temp.length >= 2)
+    //   this.temp[1] = this.temp[1].replace('\n','\r\n');
 
     this.id = this.ques[index]._id;
     this.isSaved = (this.sol[index].length>0)?true:false;

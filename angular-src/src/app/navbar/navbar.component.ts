@@ -4,6 +4,8 @@ import fontawesome from '@fortawesome/fontawesome';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { DataService } from '../services/data.service';
+import { QuesService } from '../services/ques.service';
+import { NotificationsService } from 'angular2-notifications/dist';
 
 fontawesome.library.add(faSignOutAlt, faSignInAlt, faUserPlus, faUser, faInfoCircle, faListOl, faSignal);
 
@@ -16,17 +18,30 @@ fontawesome.library.add(faSignOutAlt, faSignInAlt, faUserPlus, faUser, faInfoCir
 export class NavbarComponent implements OnInit {
 
   constructor(private authService: AuthService,
-    private data: DataService,private router: Router) { }
+    private data: DataService,private router: Router,private quesService: QuesService,private notificationService: NotificationsService) { }
   
   user: string;
   contest;
   flagBughunt=false;
   flagCrypto=false;
+  resume = false;
 
   ngOnInit() {
     this.data.currentName.subscribe(message => this.user = message);
     this.contest=this.router.url;
     console.log(this.contest);
+    this.quesService.getAllQues().subscribe(
+      data => {
+        if(data.startTime != null)
+          this.resume = true;
+        else
+          this.resume = false;
+      },
+      error => {
+        this.notificationService.create("", JSON.parse(error._body).error, "");
+        this.router.navigate['/welcome'];
+      }
+    );
     
   }
   setFlagBughunt(){
@@ -40,6 +55,10 @@ export class NavbarComponent implements OnInit {
   logout(){
     this.authService.logout();
     this.flagBughunt=false;
+  }
+
+  isAdmin(){
+    return this.authService.isAdmin();
   }
 
 }

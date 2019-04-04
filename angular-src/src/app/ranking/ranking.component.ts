@@ -51,40 +51,24 @@ export class RankingComponent implements OnInit {
     // );
 
     
-    this.flawService.getRanklist().subscribe(
-      data =>{
-        this.flawScores = data.users;
-      },
-      error => {
-        this.notificationsService.error("Oops!!", JSON.parse(error._body).error, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
-      }
-    );
-
-    
-    // this.queService.getAllQues().subscribe(
+    // this.flawService.getRanklist().subscribe(
     //   data =>{
-    //     this.ques = data.ques;
-    //     for(let que of this.ques){
-    //       for(let user of que.users){
-    //         if(this.ranking.hasOwnProperty(user))
-    //           this.ranking[user] = this.ranking[user]+que.points;
-    //         else
-    //           this.ranking[user] = que.points;
-    //       }
-    //     }
-    //     for(let key in this.ranking){
-    //       if(this.ranking.hasOwnProperty(key)){
-    //         this.queScores.push({'team': key, 'score': this.ranking[key]})
-    //       }
-    //     }
-    //     this.queScores.sort(function(a, b){
-    //       return b.score - a.score;
-    //     });
+    //     this.flawScores = data.users;
     //   },
     //   error => {
     //     this.notificationsService.error("Oops!!", JSON.parse(error._body).error, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
     //   }
     // );
+
+    
+    this.queService.getAllQues().subscribe(
+      data =>{
+        this.ques = data.ques;
+      },
+      error => {
+        this.notificationsService.error("Oops!!", JSON.parse(error._body).error, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
+      }
+    );
   }
 
 }
