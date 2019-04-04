@@ -26,7 +26,7 @@
   </div> -->
   <div class="col-md-3">
         <li class="list-group-item text-center rounded-0" routerLink="/ques/add" *ngIf="isAdmin()"><i class="fa fa-plus-circle"></i></li>
-
+<h5 class="text-center">Question Pellete</h5>
       <div class="row">
       <div class="col-sm-2 text-center border border-secondary" style="cursor: pointer; border-radius: 20px; padding:10px; margin: 2px; height: 75px;" *ngFor="let que of ques; let i = index" (click)="displayQue(i)" [ngClass]="{'savedd':saved[i] , 'activee': i==index}">
         <h5 style="vertical-align: middle;">{{i+1}}<br><span *ngIf="marked[i]"><i class="fas fa-check-circle" style="color: blue"></i></span></h5></div>
@@ -71,7 +71,7 @@
                 <button *ngIf="index==ques.length-1" class="btn btn-primary" (click)="submitSol()"><i class="fa fa-check"></i> Submit</button>
                   <button *ngIf="isAdmin()" class="btn btn-warning"><i class="fa fa-pencil-alt"></i> Edit</button>
                   <button *ngIf="isAdmin()" class="btn btn-danger" (click)="deleteQue()"><i class="fa fa-trash"></i> Delete</button>
-                  <button type="button" class="btn btn-warning" (click)="markQuestion(index)" ><i class="fas fa-check-circle" style="color: green"></i> {{ marked[i] ? "Unmark" : "Mark"}}</button>
+                  <button type="button" class="btn btn-warning" (click)="markQuestion(index)" ><i class="fas fa-check-circle" style="color: green"></i> {{ marked[index] ? "Unmark" : "Mark"}}</button>
                   <button class="btn btn-info" *ngIf="index>0" (click)="displayQue(index-1)"><i class="fas fa-arrow-alt-circle-left"></i> Previous</button>
                   <button class="btn btn-info" *ngIf="index<ques.length-1" (click)="displayQue(index+1)">Next <i class="fas fa-arrow-alt-circle-right"></i></button>
 
