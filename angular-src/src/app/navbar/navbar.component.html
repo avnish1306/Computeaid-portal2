@@ -26,8 +26,8 @@
             <a class="nav-link" routerLinkActive="active"><i class="fas fa-list-ol"></i> CryptoQuest</a>
           </li>
           <li class="nav-item">
-              <a class="nav-link" *ngIf="!flagBughunt && resume" routerLink="/ques" routerLinkActive="active"><i class="fas fa-list-ol"></i> Bughunt</a>
-              <a class="nav-link" *ngIf="!flagBughunt && !resume" routerLink="/ques" routerLinkActive="active" data-toggle="modal" data-target="#bughuntModel"><i class="fas fa-list-ol"></i> Bughunt</a>
+              <a class="nav-link" *ngIf="!flagBughunt && resume && !isAttempt" routerLink="/ques" routerLinkActive="active"><i class="fas fa-list-ol"></i> Bughunt</a>
+              <a class="nav-link" *ngIf="!flagBughunt && !resume && !isAttempt" routerLink="/ques" routerLinkActive="active" data-toggle="modal" data-target="#bughuntModel"><i class="fas fa-list-ol"></i> Bughunt</a>
               <a class="nav-link" *ngIf="flagBughunt" routerLink="/ques" routerLinkActive="active" ><i class="fas fa-list-ol"></i> Bughunt</a>
           </li>
           <li class="nav-item">

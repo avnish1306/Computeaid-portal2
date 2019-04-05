@@ -53,7 +53,7 @@ export class AddFlawComponent implements OnInit {
       reader.readAsDataURL(file);
       reader.onload = () => {
         this.ipFile.name=file.name;
-        this.ipFile.value=reader.result.split(',')[1];
+        //this.ipFile.value=reader.result.split(',')[1];
       };
     }
   }
@@ -65,7 +65,7 @@ export class AddFlawComponent implements OnInit {
       reader.readAsDataURL(file);
       reader.onload = () => {
         this.opFile.name=file.name;
-        this.opFile.value=reader.result.split(',')[1];
+        //this.opFile.value=reader.result.split(',')[1];
       };
     }
   }

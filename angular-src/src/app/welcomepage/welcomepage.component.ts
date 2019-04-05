@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { QuesService } from '../services/ques.service';
-import { NotificationsService } from 'angular2-notifications/dist/';
+import { NotificationsService } from 'angular2-notifications';
 
 @Component({
   selector: 'app-welcomepage',
@@ -21,7 +21,7 @@ export class WelcomepageComponent implements OnInit {
           this.router.navigate['/ques'];
       },
       error => {
-        this.notificationService.create("", JSON.parse(error._body).error, "");
+        this.notificationService.create("", JSON.parse(error._body).error);
         this.router.navigate['/welcome'];
       }
     );

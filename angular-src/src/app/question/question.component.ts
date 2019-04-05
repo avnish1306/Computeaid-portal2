@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NotificationsService } from 'angular2-notifications/dist/';
+import { NotificationsService } from 'angular2-notifications';
 import { faPlusCircle, faTrash, faPencilAlt, faEye } from '@fortawesome/fontawesome-free-solid'
 import fontawesome from '@fortawesome/fontawesome';
 
@@ -113,7 +113,7 @@ export class QuestionComponent implements OnInit {
         //console.log(this.submission);
       },
       error => {
-        this.notificationsService.create("", JSON.parse(error._body).error, "");
+        this.notificationsService.create("", JSON.parse(error._body).error);
       }
     );
     this.optForm = new FormGroup({
@@ -212,8 +212,8 @@ export class QuestionComponent implements OnInit {
     this.author = this.ques[index].author;
     this.desc = this.ques[index].desc;
     this.temp = this.desc.split("<codeishere>");
-    // if(this.temp.length >= 2)
-    //   this.temp[1] = this.temp[1].replace('\n','\r\n');
+    if(this.temp.length >= 2)
+      this.temp[1] = this.temp[1].replace(/\t/ig,'    ');
 
     this.id = this.ques[index]._id;
     this.isSaved = (this.sol[index].length>0)?true:false;
@@ -395,6 +395,10 @@ export class QuestionComponent implements OnInit {
         this.notificationsService.error("Oops!!", JSON.parse(error._body).error, {timeOut: 5000, showProgressBar: true, pauseOnHover: true, clickToClose: true, animate: 'fromRight'});
       }
     );
+  }
+  confirmSubmission(){
+    if(confirm('Are you sure to submit? You cannot go back once submitted'))
+      this.submitSol();
   }
   submitSol(){
     this.quesService.submitSol().subscribe(

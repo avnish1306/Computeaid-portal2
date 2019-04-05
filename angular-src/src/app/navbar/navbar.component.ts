@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { DataService } from '../services/data.service';
 import { QuesService } from '../services/ques.service';
-import { NotificationsService } from 'angular2-notifications/dist';
+import { NotificationsService } from 'angular2-notifications';
 
 fontawesome.library.add(faSignOutAlt, faSignInAlt, faUserPlus, faUser, faInfoCircle, faListOl, faSignal);
 
@@ -25,6 +25,7 @@ export class NavbarComponent implements OnInit {
   flagBughunt=false;
   flagCrypto=false;
   resume = false;
+  isAttempt = false;
 
   ngOnInit() {
     this.data.currentName.subscribe(message => this.user = message);
@@ -32,13 +33,14 @@ export class NavbarComponent implements OnInit {
     console.log(this.contest);
     this.quesService.getAllQues().subscribe(
       data => {
+        this.isAttempt = data.isAttempt;
         if(data.startTime != null)
           this.resume = true;
         else
           this.resume = false;
       },
       error => {
-        this.notificationService.create("", JSON.parse(error._body).error, "");
+        this.notificationService.create("", JSON.parse(error._body).error);
         this.router.navigate['/welcome'];
       }
     );

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { QuesService } from '../services/ques.service';
-import { NotificationsService } from 'angular2-notifications/dist/';
+import { NotificationsService } from 'angular2-notifications';
 @Component({
   selector: 'app-add-que',
   templateUrl: './add-que.component.html',

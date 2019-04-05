@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NotificationsService } from 'angular2-notifications/dist/';
+import { NotificationsService } from 'angular2-notifications';
 import { faPlusCircle, faTrash, faPencilAlt, faEye } from '@fortawesome/fontawesome-free-solid'
 import fontawesome from '@fortawesome/fontawesome';
 
@@ -49,7 +49,7 @@ export class ChalsComponent implements OnInit {
         }
       },
       error => {
-        this.notificationsService.create("", JSON.parse(error._body).error, "");
+        this.notificationsService.create("", JSON.parse(error._body).error);
       }
     );
     this.flagForm = new FormGroup({

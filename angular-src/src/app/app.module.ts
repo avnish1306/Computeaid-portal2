@@ -5,7 +5,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { ParticlesModule } from 'angular-particle';
-import { SimpleNotificationsModule } from 'angular2-notifications/dist/';
+import { SimpleNotificationsModule } from 'angular2-notifications';
 import { AceEditorModule } from 'ng2-ace-editor';
 import { CountdownTimerModule } from 'ngx-countdown-timer';
 
